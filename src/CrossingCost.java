@@ -7,11 +7,15 @@ import java.util.Map;
 public class CrossingCost {
 
 
-     Map<String,Integer> terrain;
+     Map<Character,Integer> terrain;
 
-     Map<String,Integer> objects;
+     Map<Character,Integer> objects;
 
     public static final int DEFAULTCOST = 1;
+
+    private static final int BALLOONTIME = 6;
+    private static final int PLANKTIME = 5;
+    private static final int CANOETIME =4;
 
     public CrossingCost(){
         init();
@@ -19,17 +23,17 @@ public class CrossingCost {
 
     public void init(){
 
-        terrain = new HashMap<>();
-        objects = new HashMap<>();
+        terrain = new HashMap<Character,Integer>();
+        objects = new HashMap<Character,Integer>();
 
-        objects.put("c",4);
-        objects.put("p",5);
-        objects.put("b",6);
+        objects.put('c',CANOETIME);
+        objects.put('p',PLANKTIME);
+        objects.put('b',BALLOONTIME);
 
-        terrain.put("_",1);
-        terrain.put("L",2);
-        terrain.put("P",3);
-        terrain.put("M",4);
+        terrain.put('_',1);
+        terrain.put('L',2);
+        terrain.put('P',3);
+        terrain.put('M',4);
     }
 
 
@@ -37,7 +41,7 @@ public class CrossingCost {
 
 
 
-    public int crossingCost(String object,boolean usingObject, boolean hadObject,boolean leavingWithObject){
+    public int crossingCost(char object,boolean usingObject, boolean hadObject,boolean leavingWithObject){
 
 
         if (usingObject) {
