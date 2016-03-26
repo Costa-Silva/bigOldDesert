@@ -45,10 +45,8 @@ public class DesertProblem {
 
         while (currentSpot>=0){
 
-            if (path[currentSpot]=='_'){
+                   int foundObstacle = searchNextObstacle(currentSpot);
 
-
-            }
 
         }
 
@@ -60,8 +58,16 @@ public class DesertProblem {
         return 0;
     }
 
+    private int searchNextObstacle(int currentPos) {
 
+        for (int i = currentPos;i>=0;i--){
 
+            if (path[i]=='L' ||path[i]=='P'||path[i]=='L'){
+                return i;
+            }
+
+        }
+    }
 
 
 }
