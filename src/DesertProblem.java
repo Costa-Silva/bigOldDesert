@@ -73,22 +73,22 @@ public class DesertProblem {
                         break;
                 }
 
-            int balloonCost = getBalloonCost(foundObstacle,balloonPos);
-            int plankCost = getPlankCost(foundObstacle,plankPos);
-            int canoeCost = getCanoeCost(foundObstacle,canoePos);
+                int balloonCost = getBalloonCost(foundObstacle,balloonPos);
+                int plankCost = getPlankCost(foundObstacle,plankPos);
+                int canoeCost = getCanoeCost(foundObstacle,canoePos);
 
-            int artifactPos = 0;
-            int artifactCost = 0;
-            if(balloonCost<plankCost && balloonCost<canoeCost){
-                artifactPos=balloonPos;
-                artifactCost=balloonCost;
-            }else if(plankCost<balloonCost &&plankCost<canoeCost){
-                artifactPos=plankPos;
-                artifactCost=plankCost;
-            }else {
-                artifactPos=canoePos;
-                artifactCost=canoeCost;
-            }
+                int artifactPos = 0;
+                int artifactCost = 0;
+                if(balloonCost<plankCost && balloonCost<canoeCost){
+                    artifactPos=balloonPos;
+                    artifactCost=balloonCost;
+                }else if(plankCost<balloonCost &&plankCost<canoeCost){
+                    artifactPos=plankPos;
+                    artifactCost=plankCost;
+                }else {
+                    artifactPos=canoePos;
+                    artifactCost=canoeCost;
+                }
                 currentSpot=artifactPos;
                 cost+=artifactCost;
             }else {
@@ -102,21 +102,21 @@ public class DesertProblem {
     private int getCanoeCost(int currentSpot, int canoePos) {
         int canoeCost=0;
         if (canoePos>0)
-        if(currentSpot>canoePos){
-            for(int i =currentSpot;i>=canoePos;i--){
-               if(i>0) {
-                   char terrain = path[i];
-                   if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
-                       canoeCost += crossingCost.crossingCost('c', true, true, true);
-                   } else if (terrain == 'c') {
-                       canoeCost += crossingCost.crossingCost(terrain, false, false, true);
-                   } else {
-                       canoeCost += crossingCost.crossingCost(terrain, false, true, true);
-                   }
-               }
+            if(currentSpot>canoePos){
+                for(int i =currentSpot;i>=canoePos;i--){
+                    if(i>0) {
+                        char terrain = path[i];
+                        if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
+                            canoeCost += crossingCost.crossingCost('c', true, true, true);
+                        } else if (terrain == 'c') {
+                            canoeCost += crossingCost.crossingCost(terrain, false, false, true);
+                        } else {
+                            canoeCost += crossingCost.crossingCost(terrain, false, true, true);
+                        }
+                    }
+                }
+                return canoeCost;
             }
-            return canoeCost;
-        }
 
         return Integer.MAX_VALUE;
     }
@@ -125,21 +125,21 @@ public class DesertProblem {
 
         int plankCost=0;
         if (plankPos>0)
-        if(currentSpot>plankPos){
-            for(int i =currentSpot;i>=plankPos;i--){
-                if(i>0) {
-                    char terrain = path[i];
-                    if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
-                        plankCost += crossingCost.crossingCost('p', true, true, true);
-                    } else if (terrain == 'p') {
-                        plankCost += crossingCost.crossingCost(terrain, false, false, true);
-                    } else {
-                        plankCost += crossingCost.crossingCost(terrain, false, true, true);
+            if(currentSpot>plankPos){
+                for(int i =currentSpot;i>=plankPos;i--){
+                    if(i>0) {
+                        char terrain = path[i];
+                        if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
+                            plankCost += crossingCost.crossingCost('p', true, true, true);
+                        } else if (terrain == 'p') {
+                            plankCost += crossingCost.crossingCost(terrain, false, false, true);
+                        } else {
+                            plankCost += crossingCost.crossingCost(terrain, false, true, true);
+                        }
                     }
                 }
+                return plankCost;
             }
-            return plankCost;
-        }
 
         return Integer.MAX_VALUE;
 
@@ -149,21 +149,21 @@ public class DesertProblem {
     private int getBalloonCost(int currentSpot, int balloonPos) {
         int balloonCost=0;
         if (balloonPos>0)
-        if(currentSpot>balloonPos){
-            for(int i =currentSpot;i>=balloonPos;i--){
-               if (i>0) {
-                   char terrain = path[i];
-                   if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
-                       balloonCost += crossingCost.crossingCost('b', true, true, true);
-                   } else if (terrain == 'b') {
-                       balloonCost += crossingCost.crossingCost(terrain, false, false, true);
-                   } else {
-                       balloonCost += crossingCost.crossingCost(terrain, false, true, true);
-                   }
-               }
+            if(currentSpot>balloonPos){
+                for(int i =currentSpot;i>=balloonPos;i--){
+                    if (i>0) {
+                        char terrain = path[i];
+                        if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
+                            balloonCost += crossingCost.crossingCost('b', true, true, true);
+                        } else if (terrain == 'b') {
+                            balloonCost += crossingCost.crossingCost(terrain, false, false, true);
+                        } else {
+                            balloonCost += crossingCost.crossingCost(terrain, false, true, true);
+                        }
+                    }
+                }
+                return balloonCost;
             }
-            return balloonCost;
-        }
 
         return Integer.MAX_VALUE;
     }
