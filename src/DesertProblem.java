@@ -108,7 +108,7 @@ public class DesertProblem {
                    char terrain = path[i];
                    if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
                        canoeCost += crossingCost.crossingCost('c', true, true, true);
-                   } else if (terrain == 'p') {
+                   } else if (terrain == 'c') {
                        canoeCost += crossingCost.crossingCost(terrain, false, false, true);
                    } else {
                        canoeCost += crossingCost.crossingCost(terrain, false, true, true);
