@@ -40,7 +40,6 @@ public class CrossingCost {
     public int crossingCost(String object,boolean usingObject, boolean hadObject,boolean leavingWithObject){
 
 
-
         if (usingObject) {
 
             return objects.get(object);
