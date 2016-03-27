@@ -31,13 +31,15 @@ public class DesertProblem {
     public int getMinimumCost(){
 
         int currentSpot;
+        int pathLenght = path.length;
+        if (path[pathLenght-1]=='L' ||path[pathLenght-1]=='P'|| path[pathLenght-1]=='M') {
+            gotObject = true;
+        }
 
         for(currentSpot=path.length-1; currentSpot>=0;currentSpot--) {
 
 
-            if (path[currentSpot]=='L' ||path[currentSpot]=='P'|| path[currentSpot]=='M') {
-                gotObject = true;
-            }
+
 
             int foundObstacle = searchNextObstacle(currentSpot);
             int balloonPos = -1;
