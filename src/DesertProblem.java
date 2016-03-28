@@ -10,7 +10,9 @@ public class DesertProblem {
     private static final int BALLOONTIME = 6;
     private static final int PLANKTIME = 5;
     private static final int CANOETIME =4;
-
+    private static final char BALLOON= 'b';
+    private static final char CANOE = 'c';
+    private static final char PLANK = 'p';
     private int cost;
     private boolean gotObject;
     private char[] path;
@@ -40,7 +42,6 @@ public class DesertProblem {
 
 
 
-
             int foundObstacle = searchNextObstacle(currentSpot);
             int balloonPos = -1;
             int plankPos = -1;
@@ -50,22 +51,22 @@ public class DesertProblem {
                 switch (path[foundObstacle]){
 
                     case 'L':
-                        balloonPos=nearestBalloon(foundObstacle);
-                        plankPos=nearestPlank(foundObstacle);
-                        canoePos=nearestCanoe(foundObstacle);
+                        balloonPos=nearestObjectPosition(foundObstacle,BALLOON);
+                        plankPos=nearestObjectPosition(foundObstacle,PLANK);
+                        canoePos=nearestObjectPosition(foundObstacle,CANOE);
                         break;
                     case 'P':
-                        balloonPos=nearestBalloon(foundObstacle);
-                        plankPos=nearestPlank(foundObstacle);
+                        balloonPos=nearestObjectPosition(foundObstacle,BALLOON);
+                        plankPos=nearestObjectPosition(foundObstacle,PLANK);
                         break;
                     case 'M':
-                        balloonPos=nearestBalloon(foundObstacle);
+                        balloonPos=nearestObjectPosition(foundObstacle,BALLOON);
                         break;
                 }
 
-                int balloonCost = getBalloonCost(foundObstacle,balloonPos);
-                int plankCost = getPlankCost(foundObstacle,plankPos);
-                int canoeCost = getCanoeCost(foundObstacle,canoePos);
+                int balloonCost = getObjectCost(foundObstacle,balloonPos,BALLOON);
+                int plankCost = getObjectCost(foundObstacle,plankPos,PLANK);
+                int canoeCost = getObjectCost(foundObstacle,canoePos,CANOE);
 
                 int artifactPos = 0;
                 int artifactCost = 0;
@@ -89,103 +90,41 @@ public class DesertProblem {
         return cost;
     }
 
-    private int getCanoeCost(int currentSpot, int canoePos) {
-        int canoeCost=0;
-        if (canoePos>=0)
-            if(currentSpot>canoePos){
-                for(int i =currentSpot;i>=canoePos;i--){
+    private int getObjectCost(int currentSpot, int objectPos,char objectChar) {
+        int objectCost=0;
+        if (objectPos>=0)
+            if(currentSpot>objectPos){
+                for(int i =currentSpot;i>=objectPos;i--){
                     if(i>=0) {
                         char terrain = path[i];
                         if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
-                            canoeCost += crossingCost('c', true, true, true);
-                        } else if (terrain == 'c') {
-                            canoeCost += crossingCost(terrain, false, false, true);
+                            objectCost += crossingCost(objectChar, true, true, true);
+                        } else if (terrain == objectChar) {
+                            objectCost += crossingCost(terrain, false, false, true);
                         } else {
-                            canoeCost += crossingCost(terrain, false, true, true);
+                            objectCost += crossingCost(terrain, false, true, true);
                         }
                     }
                 }
-                return canoeCost;
+                return objectCost;
             }
 
         return Integer.MAX_VALUE;
     }
 
-    private int getPlankCost(int currentSpot, int plankPos) {
 
-        int plankCost=0;
-        if (plankPos>=0)
-            if(currentSpot>plankPos){
-                for(int i =currentSpot;i>=plankPos;i--){
-                    if(i>=0) {
-                        char terrain = path[i];
-                        if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
-                            plankCost += crossingCost('p', true, true, true);
-                        } else if (terrain == 'p') {
-                            plankCost += crossingCost(terrain, false, false, true);
-                        } else {
-                            plankCost += crossingCost(terrain, false, true, true);
-                        }
-                    }
-                }
-                return plankCost;
-            }
+    private int nearestObjectPosition(int currentPos, char objectChar){
 
-        return Integer.MAX_VALUE;
-
-    }
-
-
-    private int getBalloonCost(int currentSpot, int balloonPos) {
-        int balloonCost=0;
-        if (balloonPos>=0)
-            if(currentSpot>balloonPos){
-                for(int i =currentSpot;i>=balloonPos;i--){
-                    if (i>=0) {
-                        char terrain = path[i];
-                        if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
-                            balloonCost += crossingCost('b', true, true, true);
-                        } else if (terrain == 'b') {
-                            balloonCost += crossingCost(terrain, false, false, true);
-                        } else {
-                            balloonCost += crossingCost(terrain, false, true, true);
-                        }
-                    }
-                }
-                return balloonCost;
-            }
-
-        return Integer.MAX_VALUE;
-    }
-
-    private int nearestCanoe(int currentPos){
         for(int i = currentPos;i>=0;i--){
-            if(path[i]=='c'){
+            if(path[i]==objectChar){
                 return i;
             }
         }
         return -1;
     }
 
-    private int nearestPlank(int currentPos){
-        for(int i = currentPos;i>=0;i--){
-            if(path[i]=='p'){
-                return i;
-            }
-        }
-        return -1;
 
-    }
 
-    private int nearestBalloon(int currentPos){
-        for(int i = currentPos;i>=0;i--){
-            if(path[i]=='b'){
-                return i;
-            }
-        }
-        return -1;
-
-    }
 
     private int searchNextObstacle(int currentPos) {
 
