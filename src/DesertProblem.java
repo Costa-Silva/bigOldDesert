@@ -33,8 +33,8 @@ public class DesertProblem {
     public int getMinimumCost(){
 
         int currentSpot;
-        int pathLenght = path.length;
-        if (path[pathLenght-1]=='L' ||path[pathLenght-1]=='P'|| path[pathLenght-1]=='M') {
+        int pathLength = path.length;
+        if (path[pathLength-1]=='L' ||path[pathLength-1]=='P'|| path[pathLength-1]=='M') {
             gotObject = true;
         }
 
