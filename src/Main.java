@@ -14,8 +14,9 @@ public class Main {
             int numberOfProb = Integer.parseInt(in.readLine());
             for(int i = 0; i<numberOfProb;i++){
                 String problem = in.readLine();
-                DesertProblem desertProblem = new DesertProblem(problem.toCharArray());
-                System.out.println(desertProblem.getMinimumCost());
+                Desert desertProblem = new Desert(problem.toCharArray());
+
+                System.out.println(desertProblem.problem());
             }
 
         } catch (IOException e) {
