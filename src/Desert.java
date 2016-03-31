@@ -22,9 +22,22 @@ public class Desert {
     private char[] path;
     private long matrixPath[][];
 
+
+    private long previousValuePlain;
+    private long previousValueBalloon;
+    private long previousValueCanoe;
+    private long previousValuePlank;
+
     public Desert(char[] path){
 
         this.path=path;
+
+
+        previousValuePlain = Integer.MAX_VALUE;
+        previousValueBalloon = Integer.MAX_VALUE;
+        previousValueCanoe = Integer.MAX_VALUE;
+        previousValuePlank = Integer.MAX_VALUE;
+
 
         matrixPath = new long[4][path.length];
 
@@ -40,10 +53,10 @@ public class Desert {
         long valueAux;
         for (int i =1; i<path.length;i++){
 
-            long previousValuePlain = matrixPath[0][i-1];
-            long previousValueBalloon = matrixPath[1][i-1];
-            long previousValueCanoe = matrixPath[2][i-1];
-            long previousValuePlank = matrixPath[3][i-1];
+             previousValuePlain = matrixPath[0][i-1];
+             previousValueBalloon = matrixPath[1][i-1];
+             previousValueCanoe = matrixPath[2][i-1];
+             previousValuePlank = matrixPath[3][i-1];
 
 
             lowestValue = Math.min(Math.min(Math.min(previousValueBalloon,previousValuePlank),previousValueCanoe),previousValuePlain);
@@ -99,18 +112,9 @@ public class Desert {
 
 
                     if (previousValueBalloon != Integer.MAX_VALUE) {
-
-                        valueAux =(previousValueBalloon + ENTERING+LEAVING+DEFAULTCOST> lowestValue+DEFAULTCOST+LEAVING) ? lowestValue+DEFAULTCOST+LEAVING :previousValueBalloon + ENTERING+LEAVING+DEFAULTCOST;
-
-
-                        if (path[i-1]== MOUNTAIN || path[i-1]==LAKE || path[i-1]== PIT)
-                            valueAux = (previousValueBalloon + ENTERING + LEAVING + DEFAULTCOST > lowestValue + DEFAULTCOST + LEAVING + ENTERING) ? lowestValue + DEFAULTCOST + LEAVING +ENTERING: previousValueBalloon + ENTERING + LEAVING + DEFAULTCOST;
-                        matrixPath[1][i] = valueAux;
-
-
-
+                        matrixPath[1][i] = getBestChoice(lowestValue,previousValueBalloon,i);
                     }else{
-                        if (path[i-1]== MOUNTAIN || path[i-1]==LAKE || path[i-1]== PIT)
+                        if (isObstacle(path[i-1]))
                             matrixPath[1][i] = lowestValue + ENTERING+DEFAULTCOST+LEAVING;
                         else matrixPath[1][i] = lowestValue + DEFAULTCOST+LEAVING;
                     }
@@ -132,17 +136,9 @@ public class Desert {
 
 
                     if (previousValueCanoe!=Integer.MAX_VALUE){
-
-                        valueAux= (previousValueCanoe + ENTERING+LEAVING+DEFAULTCOST> lowestValue+DEFAULTCOST+LEAVING) ? lowestValue+DEFAULTCOST+LEAVING :previousValueCanoe + ENTERING+LEAVING+DEFAULTCOST;
-
-
-                        if (path[i-1]== MOUNTAIN || path[i-1]==LAKE || path[i-1]== PIT)
-                            valueAux = (previousValueCanoe + ENTERING + LEAVING + DEFAULTCOST > lowestValue + DEFAULTCOST + LEAVING + ENTERING) ? lowestValue + DEFAULTCOST + LEAVING+ ENTERING : previousValueCanoe + ENTERING + LEAVING + DEFAULTCOST;
-
-                        matrixPath[2][i] = valueAux;
-
+                        matrixPath[2][i] = getBestChoice(lowestValue,previousValueCanoe,i);
                     }else{
-                        if (path[i-1]== MOUNTAIN || path[i-1]==LAKE || path[i-1]== PIT)
+                        if (isObstacle(path[i-1]))
                             matrixPath[2][i] = lowestValue + ENTERING+DEFAULTCOST+LEAVING;
                         else matrixPath[2][i] = lowestValue + DEFAULTCOST+LEAVING;
 
@@ -186,17 +182,9 @@ public class Desert {
                     }
 
                     if (previousValuePlank!=Integer.MAX_VALUE){
-                        valueAux = (previousValuePlank + ENTERING+LEAVING+DEFAULTCOST> lowestValue+DEFAULTCOST+LEAVING) ? lowestValue+DEFAULTCOST+LEAVING :previousValuePlank + ENTERING+LEAVING+DEFAULTCOST;
-
-
-                        if (path[i-1]== MOUNTAIN || path[i-1]==LAKE || path[i-1]== PIT)
-                            valueAux = (previousValuePlank + ENTERING+LEAVING+DEFAULTCOST> lowestValue+DEFAULTCOST+LEAVING+ENTERING) ? lowestValue+DEFAULTCOST+LEAVING+ENTERING :previousValuePlank + ENTERING+LEAVING+DEFAULTCOST;
-
-                        matrixPath[3][i] = valueAux;
-
-
+                        matrixPath[3][i] = getBestChoice(lowestValue,previousValuePlank,i);
                     }else{
-                        if (path[i-1]== MOUNTAIN || path[i-1]==LAKE || path[i-1]== PIT)
+                        if (isObstacle(path[i-1]))
                             matrixPath[3][i] = lowestValue + ENTERING+DEFAULTCOST+LEAVING;
                         else matrixPath[3][i] = lowestValue + DEFAULTCOST+LEAVING;
 
@@ -274,20 +262,22 @@ public class Desert {
         lowestValue = Math.min(Math.min(Math.min(matrixPath[1][path.length-1],matrixPath[2][path.length-1]),matrixPath[3][path.length-1]),matrixPath[0][path.length-1]);
 
 
-        /*
-
-        for (int k=0;k<4;k++){
-            for (int j=0;j<path.length;j++){
-
-
-                System.out.print(matrixPath[k][j] +" ");
-            }
-                System.out.println();
-        }
-
-        */
-
         return lowestValue;
+    }
+
+    private boolean isObstacle(char obs){
+        return (obs == MOUNTAIN || obs == LAKE || obs == PIT);
+    }
+
+    //Quando encontra um objeto, calcula o minimo entre continuar com o objeto anterior ou apanhar este novo objeto
+    private long getBestChoice(long lowestValue,long previousValue,int i){
+        long value1 = previousValue + ENTERING+LEAVING+DEFAULTCOST;
+        long value2 = lowestValue+DEFAULTCOST+LEAVING;
+
+        if (isObstacle(path[i-1]))
+           value2+=ENTERING;
+
+        return Math.min(value1,value2);
     }
 
     private void fillFirst(char c,int pos) {
