@@ -1,5 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Antonio on 26/03/16.
@@ -14,15 +13,20 @@ public class DesertProblem {
     private static final char CANOE = 'c';
     private static final char PLANK = 'p';
     private int cost;
+    private char currentObject;
     private boolean gotObject;
     private char[] path;
     private Map<Character,Integer> objects;
+    private Map<Integer,SortedSet<Integer>> costValues;
 
     public DesertProblem(char[] path){
         objects = new HashMap<Character,Integer>();
         this.path=path;
         this.gotObject=false;
+        currentObject=' ';
         this.cost=0;
+
+        costValues= new TreeMap<Integer, SortedSet<Integer>>();
 
         objects.put('c',CANOETIME);
         objects.put('p',PLANKTIME);
@@ -39,8 +43,7 @@ public class DesertProblem {
         }
 
         for(currentSpot=path.length-1; currentSpot>=0;currentSpot--) {
-
-
+        costValues.put(currentSpot,new TreeSet<Integer>());
 
             int foundObstacle = searchNextObstacle(currentSpot);
             int balloonPos = -1;
@@ -64,24 +67,21 @@ public class DesertProblem {
                         break;
                 }
 
-                int balloonCost = getObjectCost(foundObstacle,balloonPos,BALLOON);
-                int plankCost = getObjectCost(foundObstacle,plankPos,PLANK);
-                int canoeCost = getObjectCost(foundObstacle,canoePos,CANOE);
+                getObjectCost(foundObstacle,balloonPos,BALLOON);
+                getObjectCost(foundObstacle,plankPos,PLANK);
+                getObjectCost(foundObstacle,canoePos,CANOE);
 
-                int artifactPos = 0;
-                int artifactCost = 0;
-                if(balloonCost<plankCost && balloonCost<canoeCost){
+                     int artifactPos = 0;
+                if(balloonPos>plankPos && balloonPos>canoePos){
                     artifactPos=balloonPos;
-                    artifactCost=balloonCost;
-                }else if(plankCost<balloonCost &&plankCost<canoeCost){
+                }else if(plankPos>balloonPos &&plankPos>canoePos){
                     artifactPos=plankPos;
-                    artifactCost=plankCost;
                 }else {
                     artifactPos=canoePos;
-                    artifactCost=canoeCost;
                 }
+
                 currentSpot=artifactPos;
-                cost+=artifactCost;
+                cost= costValues.get(artifactPos).first();
             }else {
                 currentSpot = -1;
             }
@@ -90,35 +90,69 @@ public class DesertProblem {
         return cost;
     }
 
-    private int getObjectCost(int currentSpot, int objectPos,char objectChar) {
+    private void getObjectCost(int currentSpot, int objectPos,char objectChar) {
         int objectCost=0;
-        if (objectPos>=0)
-            if(currentSpot>objectPos){
-                for(int i =currentSpot;i>=objectPos;i--){
-                    if(i>=0) {
+        if (objectPos>=0) {
+            if (currentSpot > objectPos) {
+                for (int i = currentSpot; i >= objectPos; i--) {
+                    if (i >= 0) {
                         char terrain = path[i];
                         if (terrain == 'L' || terrain == 'P' || terrain == 'M') {
-                            objectCost += crossingCost(objectChar, true, true, true);
+                            if (canUse(objectChar,terrain))
+                            objectCost += crossingCost(objectChar,terrain, true, true, true);
+                            else {
+                                objectCost=-1;
+                            }
+                            break;
                         } else if (terrain == objectChar) {
-                            objectCost += crossingCost(terrain, false, false, true);
+                            if (objectPos == 0)
+                                objectCost += crossingCost(objectChar,terrain, false, false, true);
+                            else {
+                                char previousTerrain = path[i - 1];
+                                if (previousTerrain == 'L' || previousTerrain == 'P' || previousTerrain == 'M')
+                                    objectCost += crossingCost(objectChar,terrain, false, true, true);
+                                else {
+                                    objectCost += crossingCost(objectChar,terrain, false, false, true);
+                                }
+                            }
+
                         } else {
-                            objectCost += crossingCost(terrain, false, true, true);
+                            objectCost += crossingCost(objectChar,terrain, false, true, true);
                         }
                     }
                 }
-                return objectCost;
-            }
+                int instantCost = 0;
+                if (objectCost<0)
+                    instantCost = Integer.MAX_VALUE;
+                else instantCost = cost+objectCost;
 
-        return Integer.MAX_VALUE;
+                if (costValues.containsKey(objectPos)) {
+                    if (costValues.get(objectPos) != null) {
+                        costValues.get(objectPos).add(instantCost);
+                    } else {
+                        TreeSet<Integer> set = new TreeSet<Integer>();
+                        set.add(instantCost);
+                        costValues.put(objectPos, set);
+                    }
+                }else {
+                    TreeSet<Integer> set = new TreeSet<Integer>();
+                    set.add(instantCost);
+                    costValues.put(objectPos,set);
+                }
+
+            }
+        }
     }
 
 
     private int nearestObjectPosition(int currentPos, char objectChar){
 
         for(int i = currentPos;i>=0;i--){
-            if(path[i]==objectChar){
+
+            if (canUse(objectChar,path[i])){
+            if(path[i]==objectChar)
                 return i;
-            }
+            }else break;
         }
         return -1;
     }
@@ -145,12 +179,13 @@ public class DesertProblem {
 
 
 
-    private int crossingCost(char object,boolean usingObject, boolean hadObject,boolean leavingWithObject){
+    private int crossingCost(char object,char terrain,boolean usingObject, boolean hadObject,boolean leavingWithObject){
 
 
         if (usingObject) {
-
+            if(canUse(object,terrain))
             return objects.get(object);
+            else return -1;
         }
 
         int crossCost=DEFAULTCOST;
@@ -163,6 +198,23 @@ public class DesertProblem {
         return crossCost;
     }
 
+    private boolean canUse(char object, char terrain) {
+        switch (object){
+            case 'b':
+                    return true;
+            case 'p':
+                if (terrain == 'P' || terrain == 'L')
+                    return true;
+                else if(terrain=='M') return false;
+                break;
+            case 'c':
+                if (terrain=='L')
+                    return true;
+                else if (terrain=='M' || terrain == 'P')return false;
+                break;
+        }
+        return false;
+    }
 
 
 }
