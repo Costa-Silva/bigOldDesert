@@ -50,28 +50,28 @@ public class Desert {
             char terrain = path[i];
             switch (terrain){
                 case PLAIN:
-                    treatPlain(true,PLANPOS,i,previousValuePlain);
-                    treatPlain(false,CANOEPOS,i,previousValueCanoe);
-                    treatPlain(false,BALLONPOS,i,previousValueBalloon);
-                    treatPlain(false,PLANKPOS,i,previousValuePlank);
+                    processPlain(true,PLANPOS,i,previousValuePlain);
+                    processPlain(false,CANOEPOS,i,previousValueCanoe);
+                    processPlain(false,BALLONPOS,i,previousValueBalloon);
+                    processPlain(false,PLANKPOS,i,previousValuePlank);
                     break;
                 case BALLOON:
-                    treatPlain(true,BALLONPOS,i,previousValueBalloon);
-                    treatObject(BALLONPOS,CANOEPOS,i,previousValueCanoe);
-                    treatObject(BALLONPOS,BALLONPOS,i,previousValueBalloon);
-                    treatObject(BALLONPOS,PLANKPOS,i,previousValuePlank);
+                    processPlain(true,BALLONPOS,i,previousValueBalloon);
+                    processObject(BALLONPOS,CANOEPOS,i,previousValueCanoe);
+                    processObject(BALLONPOS,BALLONPOS,i,previousValueBalloon);
+                    processObject(BALLONPOS,PLANKPOS,i,previousValuePlank);
                     break;
                 case CANOE:
-                    treatPlain(true,CANOEPOS,i,previousValueCanoe);
-                    treatObject(CANOEPOS,CANOEPOS,i,previousValueCanoe);
-                    treatObject(CANOEPOS,BALLONPOS,i,previousValueBalloon);
-                    treatObject(CANOEPOS,PLANKPOS,i,previousValuePlank);
+                    processPlain(true,CANOEPOS,i,previousValueCanoe);
+                    processObject(CANOEPOS,CANOEPOS,i,previousValueCanoe);
+                    processObject(CANOEPOS,BALLONPOS,i,previousValueBalloon);
+                    processObject(CANOEPOS,PLANKPOS,i,previousValuePlank);
                     break;
                 case PLANK:
-                    treatPlain(true,PLANKPOS,i,previousValuePlank);
-                    treatObject(PLANKPOS,CANOEPOS,i,previousValueCanoe);
-                    treatObject(PLANKPOS,BALLONPOS,i,previousValueBalloon);
-                    treatObject(PLANKPOS,PLANKPOS,i,previousValuePlank);
+                    processPlain(true,PLANKPOS,i,previousValuePlank);
+                    processObject(PLANKPOS,CANOEPOS,i,previousValueCanoe);
+                    processObject(PLANKPOS,BALLONPOS,i,previousValueBalloon);
+                    processObject(PLANKPOS,PLANKPOS,i,previousValuePlank);
                     break;
                 case MOUNTAIN:
                     matrixPath[PLANPOS][i] = Integer.MAX_VALUE;
@@ -116,7 +116,7 @@ public class Desert {
         return Math.min(value1,value2);
     }
 
-    private void treatPlain(boolean exp,int planepos,int i,long previousValue){
+    private void processPlain(boolean exp,int planepos,int i,long previousValue){
         if(exp) {
             if (previousValuePlain != Integer.MAX_VALUE) {
                 matrixPath[PLANPOS][i] = previousValuePlain + DEFAULTCOST;
@@ -132,7 +132,7 @@ public class Desert {
         }
     }
 
-    private void treatObject(int plane,int planepos,int i,long previousValue){
+    private void processObject(int plane,int planepos,int i,long previousValue){
         if (plane!=planepos) {
             if (previousValue != Integer.MAX_VALUE) {
                 matrixPath[planepos][i] = previousValue + ENTERING + LEAVING + DEFAULTCOST;
